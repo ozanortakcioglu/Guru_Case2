@@ -61,12 +61,16 @@ public class PlatformManager : MonoBehaviour
 
         if(Mathf.Abs(posDifference) < successAssistance) //successfully placed
         {
+            SoundManager.Instance.PlayPlatformSound(true);
             activePiece.transform.position = new Vector3(oldPiece.transform.position.x, activePiece.transform.position.y, activePiece.transform.position.z);
         }
         else //cut activePiece
         {
             if(Mathf.Abs(posDifference / 2) < activePiece.transform.localScale.x)
+            {
+                SoundManager.Instance.PlayPlatformSound(false);
                 CutActivePiece(posDifference);
+            }
             else
             {
                 isFail = true;

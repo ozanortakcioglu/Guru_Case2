@@ -29,7 +29,7 @@ public class Chibi : MonoBehaviour
         transform.DOKill();
         model.transform.DOMove(new Vector3(0, -5, 2), 1).SetRelative(true).SetEase(Ease.InSine).OnComplete(() => 
         {
-            //fail
+            SoundManager.Instance.PlaySound(SoundTrigger.Lose);
         });
     }
 

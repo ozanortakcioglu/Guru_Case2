@@ -3,7 +3,10 @@ using RotaryHeart.Lib.SerializableDictionary;
 
 public enum SoundTrigger
 {
-    Sound1,
+    Match,
+    Cut,
+    Win,
+    Lose,
 }
 
 [System.Serializable]
@@ -14,6 +17,8 @@ public class SoundManager : MonoBehaviour
     public Sounds sounds;
 
     public static SoundManager Instance;
+
+    private int matchCombo;
 
     private void Awake()
     {
@@ -26,6 +31,8 @@ public class SoundManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
+
+        matchCombo = 0;
     }
 
     public void PlaySound(SoundTrigger soundTrigger, bool onlyIfThisSoundNotPlaying = false, bool onlyIfNoSoundsPlaying = false)
@@ -45,6 +52,24 @@ public class SoundManager : MonoBehaviour
         }
 
         sounds[soundTrigger].Play();
+    }
+
+    public void PlayPlatformSound(bool isMatch)
+    {
+        if (isMatch)
+        {
+            sounds[SoundTrigger.Match].pitch = 1 + ((float)matchCombo * 0.1f);
+
+            sounds[SoundTrigger.Match].Play();
+
+            matchCombo++;
+        }
+        else
+        {
+            matchCombo = 0;
+            sounds[SoundTrigger.Cut].Play();
+
+        }
     }
 
     public void TryPlaySound(string sound)

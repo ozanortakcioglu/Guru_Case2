@@ -5,7 +5,9 @@ using System.Collections;
 
 public enum EffectTrigger
 {
-    Match,
+    Diamond,
+    Star,
+    Coin,
 }
 
 [System.Serializable]
@@ -57,7 +59,7 @@ public class EffectsManager : MonoBehaviour
         // Add Special Behavior Here
         switch (effectTrigger)
         {
-            case EffectTrigger.Match:
+            case EffectTrigger.Diamond:
 
                 break;
             default:

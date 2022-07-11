@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
 
-public class PlatformCreator : MonoBehaviour
+public class PlatformManager : MonoBehaviour
 {
     [SerializeField] private GameObject piecePrefab;
     [SerializeField] private List<GameObject> pieces;
@@ -11,6 +11,7 @@ public class PlatformCreator : MonoBehaviour
 
     private float zPosAddition = 2f;
     private float xStartPos = 3;
+    private float tweenTime = 3.5f;
     private GameObject activePiece;
     private GameObject oldPiece;
     private bool isFail = false;
@@ -18,15 +19,35 @@ public class PlatformCreator : MonoBehaviour
     private void Start()
     {
         SetInitialColors();
-        CreateNewActive();
     }
 
-    private void Update()
+    public bool isOnPlatform(float zPos)
     {
-        //controller taşı
-        if (Input.GetMouseButtonDown(0))
+        GameObject piece = null;
+        foreach (var item in pieces)
         {
-            PlaceActivePiece();
+            if (item.transform.position.z > zPos - 1f && item.transform.position.z <= zPos + 1)
+            {
+                piece = item;
+            }
+        }
+
+
+
+        if (piece != null)
+        {
+            if(piece.GetComponent<PlatformPiece>().GetLeftPos().x < 0 && piece.GetComponent<PlatformPiece>().GetRigtPos().x > 0)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        else
+        {
+            return false;
         }
     }
 
@@ -44,7 +65,7 @@ public class PlatformCreator : MonoBehaviour
         }
         else //cut activePiece
         {
-            if(posDifference / 2 < activePiece.transform.localScale.x)
+            if(Mathf.Abs(posDifference / 2) < activePiece.transform.localScale.x)
                 CutActivePiece(posDifference);
             else
             {
@@ -81,7 +102,7 @@ public class PlatformCreator : MonoBehaviour
         cuttedPiece.AddComponent<SelfDestruct>().lifetime = 4;
     }
 
-    private void CreateNewActive()
+    public void CreateNewActive()
     {
         var firstOne = pieces[0];
         pieces.Remove(firstOne);
@@ -109,9 +130,14 @@ public class PlatformCreator : MonoBehaviour
     private void Start2MoveActivePiece(bool isGoingLeft)
     {
         if (isGoingLeft)
-            activePiece.transform.DOMoveX(-10, 5).SetRelative(true).SetEase(Ease.Linear);
+            activePiece.transform.DOMoveX(-5, tweenTime).SetEase(Ease.Linear);
         else
-            activePiece.transform.DOMoveX(10, 5).SetRelative(true).SetEase(Ease.Linear);
+            activePiece.transform.DOMoveX(5, tweenTime).SetEase(Ease.Linear);
+    }
+
+    public float GetTweenTime()
+    {
+        return tweenTime;
     }
 
     private void SetInitialColors()

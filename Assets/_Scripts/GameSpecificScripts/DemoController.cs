@@ -45,6 +45,8 @@ public class DemoController : MonoBehaviour
         isStarted = true;
         controlsEnabled = true;
         platformManager.CreateNewActive();
-        chibi.StartToRun(platformManager.GetTweenTime() * 0.4f);
+        chibi.StartToRun(platformManager.GetTweenTime() * 0.375f);
+        UIManager.Instance.CloseAllPanels();
+        UIManager.Instance.OpenPanel(PanelNames.InGame);
     }
 }

@@ -63,6 +63,7 @@ public class PlatformManager : MonoBehaviour
         {
             SoundManager.Instance.PlayPlatformSound(true);
             activePiece.transform.position = new Vector3(oldPiece.transform.position.x, activePiece.transform.position.y, activePiece.transform.position.z);
+            activePiece.GetComponent<PlatformPiece>().PiecePlaced();
         }
         else //cut activePiece
         {
@@ -70,6 +71,7 @@ public class PlatformManager : MonoBehaviour
             {
                 SoundManager.Instance.PlayPlatformSound(false);
                 CutActivePiece(posDifference);
+                activePiece.GetComponent<PlatformPiece>().PiecePlaced();
             }
             else
             {

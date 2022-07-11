@@ -27,9 +27,12 @@ public class Chibi : MonoBehaviour
     public void Fall()
     {
         transform.DOKill();
+        model.transform.DOScale(Vector3.zero, 1f).SetEase(Ease.InSine);
         model.transform.DOMove(new Vector3(0, -5, 2), 1).SetRelative(true).SetEase(Ease.InSine).OnComplete(() => 
         {
             SoundManager.Instance.PlaySound(SoundTrigger.Lose);
+            UIManager.Instance.OpenPanel(PanelNames.LosePanel);
+            
         });
     }
 

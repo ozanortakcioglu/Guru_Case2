@@ -5,7 +5,9 @@ using DG.Tweening;
 
 public class Chibi : MonoBehaviour
 {
-    public GameObject model;
+    [SerializeField] private GameObject model;
+    [SerializeField] private GameObject cameraRotator;
+
     private Animator animator;
 
     private void Start()
@@ -15,6 +17,10 @@ public class Chibi : MonoBehaviour
 
     public void StartToRun(float timeFor2unit)
     {
+        cameraRotator.transform.DOKill();
+        cameraRotator.transform.DOLocalRotate(new Vector3(0, 0, 0), 0.8f).SetEase(Ease.InOutSine);
+
+
         animator.applyRootMotion = false;
         animator.SetTrigger("Run");
         model.transform.DOLocalRotate(Vector3.zero, 0.3f);
@@ -42,5 +48,8 @@ public class Chibi : MonoBehaviour
         animator.ResetTrigger("Run");
         animator.SetTrigger("Dance");
         transform.DOKill();
+        cameraRotator.transform.DOKill();
+        cameraRotator.transform.DOLocalRotate(new Vector3(0, 359, 0), 3f, RotateMode.FastBeyond360).SetEase(Ease.InOutSine);
+
     }
 }

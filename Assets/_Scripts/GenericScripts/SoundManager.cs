@@ -66,10 +66,14 @@ public class SoundManager : MonoBehaviour
         }
         else
         {
-            matchCombo = 0;
+            ResetCombo();
             sounds[SoundTrigger.Cut].Play();
-
         }
+    }
+
+    public void ResetCombo()
+    {
+        matchCombo = 0;
     }
 
     public void TryPlaySound(string sound)

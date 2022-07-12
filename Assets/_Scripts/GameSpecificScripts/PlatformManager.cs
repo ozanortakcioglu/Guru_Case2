@@ -119,6 +119,26 @@ public class PlatformManager : MonoBehaviour
         canPlace = true;
     }
 
+    public void CreateFullSize()
+    {
+        for (int i = 0; i < 2; i++)
+        {
+            var firstOne = pieces[0];
+            pieces.Remove(firstOne);
+
+
+            firstOne.transform.position = new Vector3(0, activePiece.transform.position.y, activePiece.transform.position.z + zPosAddition);
+            firstOne.transform.localScale = Vector3.one;
+
+            firstOne.GetComponent<PlatformPiece>().SetColor(GetNextColor(activePiece.GetComponent<PlatformPiece>().GetColor()));
+
+            oldPiece = activePiece;
+            activePiece = firstOne;
+            pieces.Add(activePiece);
+        }
+
+    }
+
     private void Start2MoveActivePiece(bool isGoingLeft)
     {
         if (isGoingLeft)

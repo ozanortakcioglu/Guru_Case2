@@ -112,11 +112,17 @@ public class UIManager : MonoBehaviour
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
+    public void NextLevelOnClicked()
+    {
+        FindObjectOfType<DemoController>().StartNextLevel();
+    }
+
     #region On Panel Opened Actions
 
     public void SetupInGamePanel()
     {
         ClosePanel(PanelNames.MainMenu);
+        ClosePanel(PanelNames.WinPanel);
     }
 
     #endregion

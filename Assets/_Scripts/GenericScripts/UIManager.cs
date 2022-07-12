@@ -1,10 +1,13 @@
 ﻿using System.Collections;
+using System.Collections.Generic;
+
 using UnityEngine;
 using UnityEngine.Events;
 using RotaryHeart.Lib.SerializableDictionary;
 using UnityEngine.UI;
 using System;
 using UnityEngine.SceneManagement;
+using TMPro;
 
 public enum PanelNames
 {
@@ -31,6 +34,22 @@ public class UIManager : MonoBehaviour
 
     public static UIManager Instance;
 
+    [Header("Collectible Items")]
+    public GameObject collectibleUI;
+    public Transform collectibleHolder;
+    private struct CollectibleObject
+    {
+        public CollectibleName name;
+        public GameObject go;
+        public CollectibleObject(CollectibleName _collectibleName, GameObject _go)
+        {
+            this.name = _collectibleName;
+            this.go = _go;
+        }
+    }
+
+    private List<CollectibleObject> collectibleObjects;
+
     void Awake()
     {
 
@@ -45,6 +64,48 @@ public class UIManager : MonoBehaviour
         }
 
         OpenPanel(PanelNames.MainMenu);
+    }
+
+    private void Start()
+    {
+        collectibleObjects = new List<CollectibleObject>();
+        foreach (var item in CollectibleManager.Instance.collectibles)
+        {
+            var go = Instantiate(collectibleUI, collectibleHolder);
+            go.GetComponentInChildren<TMP_Text>().text = item.Value.CollectibleCount.ToString();
+            go.GetComponentInChildren<Image>().sprite = item.Value.CollectibleIcon;
+
+            CollectibleObject collectible = new CollectibleObject(item.Key, go);
+            collectibleObjects.Add(collectible);
+        }
+    }
+
+    public GameObject GetCollectibleIcon(CollectibleName _name)
+    {
+        GameObject temp = null;
+        foreach (var item in collectibleObjects)
+        {
+            if(item.name == _name)
+            {
+                temp = item.go.GetComponentInChildren<Image>().gameObject;
+            }
+        }
+
+        return temp;
+    }
+
+    public void SetCollectibleCount(CollectibleName _name, int count)
+    {
+        TMP_Text temp = null;
+        foreach (var item in collectibleObjects)
+        {
+            if (item.name == _name)
+            {
+                temp = item.go.GetComponentInChildren<TMP_Text>();
+            }
+        }
+
+        temp.text = count.ToString();
     }
 
     public void ReloadGame()

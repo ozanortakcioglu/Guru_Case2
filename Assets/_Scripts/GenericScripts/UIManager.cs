@@ -25,7 +25,6 @@ public class UIPanelAndSetup
 {
     public GameObject UIPanel;
     public UnityEvent UIPanelSetup;
-
 }
 
 public class UIManager : MonoBehaviour

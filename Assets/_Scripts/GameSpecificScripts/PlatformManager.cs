@@ -11,61 +11,36 @@ public class PlatformManager : MonoBehaviour
 
     private float zPosAddition = 2f;
     private float xStartPos = 3;
-    private float tweenTime = 3.5f;
+    private float tweenTime;
+    private float finishZPos;
+
     private GameObject activePiece;
     private GameObject oldPiece;
+
     private bool isFail = false;
+    private bool canPlace = false;
 
     private void Start()
     {
         SetInitialColors();
     }
 
-    public bool isOnPlatform(float zPos)
-    {
-        GameObject piece = null;
-        foreach (var item in pieces)
-        {
-            if (item.transform.position.z > zPos - 1f && item.transform.position.z <= zPos + 1)
-            {
-                piece = item;
-            }
-        }
-
-
-
-        if (piece != null)
-        {
-            if(piece.GetComponent<PlatformPiece>().GetLeftPos().x < 0 && piece.GetComponent<PlatformPiece>().GetRigtPos().x > 0)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
-        else
-        {
-            return false;
-        }
-    }
-
     public void PlaceActivePiece()
     {
-        if (isFail)
+        if (isFail || !canPlace)
             return;
+
         activePiece.transform.DOKill();
 
         float posDifference = activePiece.transform.position.x - oldPiece.transform.position.x;
 
-        if(Mathf.Abs(posDifference) < successAssistance) //successfully placed
+        if(Mathf.Abs(posDifference) < successAssistance)    //successfully placed
         {
             SoundManager.Instance.PlayPlatformSound(true);
             activePiece.transform.position = new Vector3(oldPiece.transform.position.x, activePiece.transform.position.y, activePiece.transform.position.z);
             activePiece.GetComponent<PlatformPiece>().PiecePlaced();
         }
-        else //cut activePiece
+        else                                                //cut activePiece
         {
             if(Mathf.Abs(posDifference / 2) < activePiece.transform.localScale.x)
             {
@@ -80,8 +55,8 @@ public class PlatformManager : MonoBehaviour
                 activePiece.AddComponent<Rigidbody>();
             }
         }
-
-        if(!isFail)
+        canPlace = false;
+        if (!isFail)
             CreateNewActive();
     }
 
@@ -108,8 +83,17 @@ public class PlatformManager : MonoBehaviour
         cuttedPiece.AddComponent<SelfDestruct>().lifetime = 4;
     }
 
+    public void SetLevelParameters(float _zPos, float _tweenTime)
+    {
+        finishZPos = _zPos;
+        tweenTime = _tweenTime;
+    }
+
     public void CreateNewActive()
     {
+        if (finishZPos - zPosAddition <= activePiece.transform.position.z)
+            return;
+
         var firstOne = pieces[0];
         pieces.Remove(firstOne);
 
@@ -131,6 +115,8 @@ public class PlatformManager : MonoBehaviour
             Start2MoveActivePiece(false);
         else
             Start2MoveActivePiece(true);
+
+        canPlace = true;
     }
 
     private void Start2MoveActivePiece(bool isGoingLeft)
@@ -144,6 +130,34 @@ public class PlatformManager : MonoBehaviour
     public float GetTweenTime()
     {
         return tweenTime;
+    }
+
+    public bool isOnPlatform(float _zPos)
+    {
+        GameObject piece = null;
+        foreach (var item in pieces)
+        {
+            if (item.transform.position.z > _zPos - 1f && item.transform.position.z <= _zPos + 1)
+            {
+                piece = item;
+            }
+        }
+
+        if (_zPos < finishZPos - 1.1f)
+        {
+            if (piece != null)
+            {
+                if (piece.GetComponent<PlatformPiece>().GetLeftPos().x < 0 && piece.GetComponent<PlatformPiece>().GetRigtPos().x > 0)
+                    return true;
+                else
+                    return false;
+            }
+            else
+                return false;
+        }
+        else
+            return true;
+
     }
 
     private void SetInitialColors()

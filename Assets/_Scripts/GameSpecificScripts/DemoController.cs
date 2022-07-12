@@ -4,15 +4,24 @@ using UnityEngine;
 
 public class DemoController : MonoBehaviour
 {
+    [SerializeField] private GameObject finishPlatformPrefab;
     private bool controlsEnabled = false;
     private bool isStarted = false;
     private PlatformManager platformManager;
     private Chibi chibi;
 
+    [Header("Level Parameters")]
+    private int platformlLevel = 0;
+    private float finishZStartPos = 20;
+    private float tweenTime = 3.5f;
+
+
     private void Start()
     {
         platformManager = FindObjectOfType<PlatformManager>();
         chibi = FindObjectOfType<Chibi>();
+        SetLevelParameters();
+
     }
 
     private void Update()
@@ -28,6 +37,16 @@ public class DemoController : MonoBehaviour
             {
                 chibi.Fall();
                 controlsEnabled = false;
+            }
+
+            Debug.LogWarning(chibi.transform.position.z);
+
+            if(chibi.transform.position.z > GetFinishPlatformZPos())
+            {
+                //win
+                chibi.Dance();
+                controlsEnabled = false;
+                UIManager.Instance.OpenPanel(PanelNames.WinPanel);
             }
         }
 
@@ -45,8 +64,21 @@ public class DemoController : MonoBehaviour
         isStarted = true;
         controlsEnabled = true;
         platformManager.CreateNewActive();
-        chibi.StartToRun(platformManager.GetTweenTime() * 0.375f);
+        chibi.StartToRun(tweenTime * 0.375f);
         UIManager.Instance.CloseAllPanels();
         UIManager.Instance.OpenPanel(PanelNames.InGame);
+    }
+
+    private void SetLevelParameters()
+    {
+        var go = Instantiate(finishPlatformPrefab, transform);
+        go.transform.position = new Vector3(0, 0, GetFinishPlatformZPos());
+        tweenTime -= (float)platformlLevel / 5;
+        platformManager.SetLevelParameters(GetFinishPlatformZPos(), tweenTime);
+    }
+
+    public float GetFinishPlatformZPos()
+    {
+        return finishZStartPos + (finishZStartPos * (1.2f + (float)platformlLevel / 10) * platformlLevel);
     }
 }

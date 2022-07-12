@@ -38,6 +38,8 @@ public class Chibi : MonoBehaviour
 
     public void Dance()
     {
+        animator.applyRootMotion = true;
+        animator.ResetTrigger("Run");
         animator.SetTrigger("Dance");
         transform.DOKill();
     }
